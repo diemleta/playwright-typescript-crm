@@ -59,6 +59,11 @@ jobs:
         # CLI đã nằm trong devDependencies — CI không cài Allure riêng
         run: npm run report:generate
 
+      - name: Sinh Allure report 1 file
+        if: always()
+        # reports/allure-report-single/index.html — mở bằng double-click sau khi tải artifact
+        run: npm run report:single
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:

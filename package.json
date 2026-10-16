@@ -10,7 +10,8 @@
     "report": "npm run report:generate && allure open reports/allure-report",
     "report:html": "playwright show-report reports/html",
     "typecheck": "tsc --noEmit",
-    "report:generate": "node -e \"require('fs').rmSync('reports/allure-report',{recursive:true,force:true})\" && allure generate reports/allure-results && node scripts/allure-dark-theme.mjs"
+    "report:generate": "node -e \"require('fs').rmSync('reports/allure-report',{recursive:true,force:true})\" && allure generate reports/allure-results && node scripts/allure-dark-theme.mjs",
+    "report:single": "node -e \"require('fs').rmSync('reports/allure-report-single',{recursive:true,force:true})\" && allure generate -c allurerc.single.mjs reports/allure-results && node scripts/allure-dark-theme.mjs reports/allure-report-single"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",
