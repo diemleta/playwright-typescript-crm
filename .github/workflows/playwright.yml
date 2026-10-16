@@ -39,6 +39,15 @@ jobs:
           BASE_URL: ${{ vars.BASE_URL || 'https://crm.anhtester.com/authentication/login' }}  
           TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          # Tài khoản tuỳ chọn — secret thiếu thì TC tương ứng tự skip
+          PM_EMAIL: ${{ secrets.PM_EMAIL }}
+          PM_PASSWORD: ${{ secrets.PM_PASSWORD }}
+          CUSTOMER_EMAIL: ${{ secrets.CUSTOMER_EMAIL }}
+          CUSTOMER_PASSWORD: ${{ secrets.CUSTOMER_PASSWORD }}
+          TC014_EMAIL: ${{ secrets.TC014_EMAIL }}
+          TC014_PASSWORD: ${{ secrets.TC014_PASSWORD }}
+          # Fallback bắt buộc — biến rỗng thành Number('') = 0, tức tắt timeout
+          TIMEOUT: ${{ vars.TIMEOUT || '30000' }}
           HEADLESS: 'true'
         run: npx playwright test
 
