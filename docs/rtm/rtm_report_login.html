@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RTM Đăng nhập</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f3f0;
+  --surface: #fcfcfb;
+  --surface-2: #f0efec;
+  --border: #e2e0da;
+  --border-strong: #cfccc4;
+  --text: #0b0b0b;
+  --text-2: #52514e;
+  --text-3: #75736e;
+  --accent: #2a78d6;
+  --accent-soft: #e6f0fc;
+  --st-auto: #1c5cab;
+  --st-part: #3987e5;
+  --st-manual: #86b6ef;
+  --st-excl: #c9c7c1;
+  --st-excl-ink: #75736e;
+  --good: #0ca30c;
+  --good-ink: #006300;
+  --good-soft: #e3f4e3;
+  --critical: #d03b3b;
+  --critical-ink: #b02a2a;
+  --critical-soft: #fbe7e7;
+  --warning: #fab219;
+  --warning-ink: #8a5a00;
+  --warning-soft: #fdf1d6;
+  --heat-0: #f0efec;
+  --heat-1: #cde2fb;
+  --heat-2: #86b6ef;
+  --heat-3: #3987e5;
+  --heat-4: #1c5cab;
+  --shadow: 0 1px 2px rgba(20, 20, 18, .05), 0 4px 16px rgba(20, 20, 18, .04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg: #121211;
+    --surface: #1a1a19;
+    --surface-2: #232321;
+    --border: #2f2f2c;
+    --border-strong: #42423e;
+    --text: #ffffff;
+    --text-2: #c3c2b7;
+    --text-3: #9a998f;
+    --accent: #6da7ec;
+    --accent-soft: #1b2a3d;
+    --st-auto: #9ec5f4;
+    --st-part: #5598e7;
+    --st-manual: #256abf;
+    --st-excl: #4a4a46;
+    --st-excl-ink: #9a998f;
+    --good-ink: #5fd35f;
+    --good-soft: #15291a;
+    --critical-ink: #f08a8a;
+    --critical-soft: #331b1b;
+    --warning-ink: #fab219;
+    --warning-soft: #2f2612;
+    --heat-0: #232321;
+    --heat-1: #184f95;
+    --heat-2: #256abf;
+    --heat-3: #5598e7;
+    --heat-4: #9ec5f4;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211;
+  --surface: #1a1a19;
+  --surface-2: #232321;
+  --border: #2f2f2c;
+  --border-strong: #42423e;
+  --text: #ffffff;
+  --text-2: #c3c2b7;
+  --text-3: #9a998f;
+  --accent: #6da7ec;
+  --accent-soft: #1b2a3d;
+  --st-auto: #9ec5f4;
+  --st-part: #5598e7;
+  --st-manual: #256abf;
+  --st-excl: #4a4a46;
+  --st-excl-ink: #9a998f;
+  --good-ink: #5fd35f;
+  --good-soft: #15291a;
+  --critical-ink: #f08a8a;
+  --critical-soft: #331b1b;
+  --warning-ink: #fab219;
+  --warning-soft: #2f2612;
+  --heat-0: #232321;
+  --heat-1: #184f95;
+  --heat-2: #256abf;
+  --heat-3: #5598e7;
+  --heat-4: #9ec5f4;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+code, .mono { font-family: ui-monospace, "Cascadia Mono", "Consolas", "SFMono-Regular", monospace; font-size: .86em; }
+a { color: var(--accent); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px 64px; }
+@media (max-width: 640px) { .wrap { padding: 20px 16px 48px; } }
+
+/* Header */
+.top { display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); font-weight: 600; }
+h1 { font-size: 30px; line-height: 1.2; margin: 6px 0 10px; letter-spacing: -.01em; }
+h1 .pfx { color: var(--text-3); font-weight: 500; }
+.lede { font-size: 16px; color: var(--text-2); max-width: 760px; margin: 0; }
+.lede b { color: var(--text); }
+.theme-btn {
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-2);
+  border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer;
+}
+.theme-btn:hover { color: var(--text); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 18px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--text-3); }
+.meta b { color: var(--text-2); font-weight: 600; }
+
+/* Cards */
+section { margin-top: 36px; }
+h2 { font-size: 19px; margin: 0 0 4px; letter-spacing: -.005em; }
+.sub { color: var(--text-3); font-size: 13.5px; margin: 0 0 14px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+.pad { padding: 20px 22px; }
+@media (max-width: 640px) { .pad { padding: 16px; } }
+
+/* Blind spot banner */
+.blind { margin-top: 26px; border-left: 4px solid var(--warning); background: var(--warning-soft); border-radius: 12px; padding: 16px 20px; }
+.blind h2 { font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.blind p { margin: 4px 0 12px; color: var(--text-2); font-size: 14px; }
+.modmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 6px; }
+.mod {
+  border-radius: 8px; padding: 7px 8px; font-size: 12px; font-weight: 600; text-align: center;
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-3); position: relative;
+}
+.mod small { display: block; font-weight: 500; font-size: 10.5px; color: var(--text-3); }
+.mod.in { background: var(--st-auto); border-color: var(--st-auto); color: var(--surface); }
+.mod.in small { color: var(--surface); opacity: .85; }
+.mod.rtm { border: 2px dashed var(--st-part); color: var(--text); background: var(--surface); }
+.mod.req { border: 2px solid var(--text-3); color: var(--text); }
+.legend-row { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; font-size: 12.5px; color: var(--text-2); }
+.legend-row span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 14px; border-radius: 4px; display: inline-block; flex: none; }
+
+/* KPI */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 22px; }
+@media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .kpis { grid-template-columns: 1fr; } }
+.kpi { padding: 18px 20px 16px; }
+.kpi .lbl { font-size: 13px; color: var(--text-2); font-weight: 600; }
+.kpi .val { font-size: 34px; font-weight: 700; line-height: 1.1; margin: 8px 0 2px; letter-spacing: -.02em; }
+.kpi .val small { font-size: 16px; font-weight: 600; color: var(--text-3); letter-spacing: 0; }
+.kpi .note { font-size: 12.5px; color: var(--text-3); min-height: 19px; }
+.meter { height: 8px; border-radius: 999px; background: var(--surface-2); margin-top: 12px; overflow: hidden; display: flex; gap: 2px; }
+.meter i { display: block; height: 100%; border-radius: 4px; }
+
+/* Stacked bars */
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--text-2); margin-bottom: 16px; }
+.legend span { display: inline-flex; gap: 7px; align-items: center; }
+.bars { display: grid; grid-template-columns: minmax(150px, 260px) 1fr 60px; gap: 10px 14px; align-items: center; }
+.bars .name { font-size: 13.5px; color: var(--text); line-height: 1.3; }
+.bars .name small { display: block; color: var(--text-3); font-size: 11.5px; }
+.bars .tot { font-size: 13px; color: var(--text-2); text-align: right; }
+.track { display: flex; gap: 2px; height: 26px; }
+.seg {
+  height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; min-width: 0; cursor: default; transition: opacity .12s;
+}
+.track:hover .seg { opacity: .55; }
+.track .seg:hover { opacity: 1; }
+.seg.AUTO { background: var(--st-auto); color: var(--surface); }
+.seg.PART { background: var(--st-part); color: #fff; }
+.seg.MANUAL { background: var(--st-manual); color: #0b0b0b; }
+.seg.EXCL { background: var(--st-excl); color: var(--text); }
+:root[data-theme="dark"] .seg.MANUAL { color: #fff; }
+@media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .seg.MANUAL { color: #fff; } }
+.bars .sep { grid-column: 1 / -1; height: 1px; background: var(--border); margin: 4px 0; }
+@media (max-width: 640px) {
+  .bars { grid-template-columns: 1fr 44px; }
+  .bars .name { grid-column: 1 / -1; margin-bottom: -6px; }
+}
+
+/* Tooltip */
+.tip {
+  position: fixed; pointer-events: none; z-index: 50; background: var(--text); color: var(--surface);
+  font-size: 12.5px; line-height: 1.45; padding: 8px 10px; border-radius: 8px; max-width: 280px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .18); opacity: 0; transition: opacity .1s;
+}
+.tip b { font-weight: 700; }
+
+/* Two column */
+.grid2 { display: grid; grid-template-columns: 1.15fr .85fr; gap: 16px; }
+@media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+
+/* Todo */
+.todo { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.todo li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.todo .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 16px; background: var(--surface-2); }
+.todo .ic.crit { background: var(--critical-soft); }
+.todo .ic.warn { background: var(--warning-soft); }
+.todo .ic.info { background: var(--accent-soft); }
+.todo h3 { font-size: 14.5px; margin: 0 0 3px; }
+.todo p { margin: 0; font-size: 13px; color: var(--text-2); }
+.todo .cmd { display: inline-block; margin-top: 6px; font-size: 12px; padding: 2px 8px; border-radius: 6px; background: var(--surface-2); color: var(--text-2); }
+
+/* Heat table */
+.heat { width: 100%; border-collapse: separate; border-spacing: 3px; font-size: 13px; }
+.heat th { font-weight: 600; color: var(--text-2); text-align: left; padding: 4px 6px; font-size: 12.5px; }
+.heat th.c { text-align: center; }
+.heat td { text-align: center; border-radius: 6px; height: 40px; font-weight: 700; font-size: 14px; }
+.heat td.tot { background: transparent; color: var(--text-2); font-weight: 600; }
+.h0 { background: var(--heat-0); color: var(--text-3); }
+.h1 { background: var(--heat-1); color: #0b0b0b; }
+.h2 { background: var(--heat-2); color: #0b0b0b; }
+.h3 { background: var(--heat-3); color: #fff; }
+.h4 { background: var(--heat-4); color: var(--surface); }
+:root[data-theme="dark"] .h1, :root[data-theme="dark"] .h2 { color: #fff; }
+@media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .h1, :root:where(:not([data-theme="light"])) .h2 { color: #fff; } }
+
+/* Filters */
+.filters { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-bottom: 14px; }
+.filters input[type=search], .filters select {
+  font: inherit; font-size: 13.5px; padding: 7px 11px; border-radius: 9px; border: 1px solid var(--border-strong);
+  background: var(--surface); color: var(--text); min-width: 0;
+}
+.filters input[type=search] { flex: 1 1 220px; }
+.chip {
+  font: inherit; font-size: 12.5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border-strong);
+  background: var(--surface); color: var(--text-2); cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+}
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+.chip .sw { width: 10px; height: 10px; border-radius: 3px; }
+.count { font-size: 12.5px; color: var(--text-3); margin-left: auto; }
+
+/* Matrix */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+table.mx { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 760px; }
+.mx th { text-align: left; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; padding: 10px 12px; border-bottom: 1px solid var(--border); background: var(--surface-2); position: sticky; top: 0; }
+.mx td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.mx tr.story td { background: var(--surface-2); font-weight: 700; font-size: 13px; padding: 9px 12px; color: var(--text); }
+.mx tr.story td span { font-weight: 500; color: var(--text-3); margin-left: 8px; }
+.mx tr.req { cursor: pointer; }
+.mx tr.req:hover td { background: var(--accent-soft); }
+.mx tr.req td:first-child { white-space: nowrap; }
+.caret { display: inline-block; width: 12px; color: var(--text-3); transition: transform .15s; }
+tr.open .caret { transform: rotate(90deg); }
+.mx tr.detail td { background: var(--surface-2); padding: 0 12px 12px 36px; }
+.mx tr.detail[hidden] { display: none; }
+.tclist { display: grid; gap: 6px; padding-top: 10px; }
+.tcrow { display: grid; grid-template-columns: 150px 1fr auto auto auto; gap: 10px; align-items: center; font-size: 12.5px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; }
+@media (max-width: 760px) { .tcrow { grid-template-columns: 1fr auto; } .tcrow .sc { grid-column: 1 / -1; } }
+.tcrow .sc { color: var(--text-2); }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.pill.AUTO { background: var(--st-auto); color: var(--surface); }
+.pill.PART { background: var(--st-part); color: #fff; }
+.pill.MANUAL { background: var(--st-manual); color: #0b0b0b; }
+.pill.EXCL { background: var(--st-excl); color: var(--text); }
+:root[data-theme="dark"] .pill.MANUAL { color: #fff; }
+@media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .pill.MANUAL { color: #fff; } }
+.res { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.r { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 6px; white-space: nowrap; }
+.r.pass { background: var(--good-soft); color: var(--good-ink); }
+.r.fail { background: var(--critical-soft); color: var(--critical-ink); }
+.r.none { background: var(--surface-2); color: var(--text-3); }
+.prio { font-size: 11.5px; font-weight: 600; color: var(--text-2); border: 1px solid var(--border-strong); border-radius: 6px; padding: 1px 7px; }
+.file { color: var(--text-2); }
+.muted { color: var(--text-3); }
+.empty { padding: 28px; text-align: center; color: var(--text-3); }
+
+/* Simple tables */
+table.plain { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.plain th { text-align: left; font-size: 12px; color: var(--text-3); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.plain td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.plain tr:last-child td { border-bottom: 0; }
+.checks { display: grid; gap: 8px; }
+.ck { display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: center; font-size: 13.5px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.ck .n { font-weight: 700; }
+.ck.ok .n { color: var(--good-ink); }
+.ck.warn .n { color: var(--warning-ink); }
+details.more { margin-top: 14px; }
+details.more summary { cursor: pointer; font-size: 13.5px; color: var(--accent); font-weight: 600; }
+footer { margin-top: 48px; font-size: 12.5px; color: var(--text-3); border-top: 1px solid var(--border); padding-top: 16px; }
+
+@media print {
+  body { background: #fff; }
+  .theme-btn, .filters { display: none; }
+  .card, .todo li { box-shadow: none; }
+  .mx tr.detail[hidden] { display: table-row; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <div class="eyebrow">Ma trận truy vết · Perfex CRM (Anh Tester Demo)</div>
+      <h1>Đăng nhập / Xác thực <span class="pfx">· LOGIN</span></h1>
+      <p class="lede" id="lede"></p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Giao diện tối</button>
+  </header>
+  <ul class="meta">
+    <li><b>Ngày sinh:</b> 16-10-2026 08:54</li>
+    <li><b>Phạm vi:</b> module LOGIN · web</li>
+    <li><b>Mốc git:</b> chưa có (thư mục chưa là git repo)</li>
+    <li><b>Nguồn:</b> requirements · test cases · src/tests/auth · 2 lần chạy tay · danh mục bug</li>
+  </ul>
+
+  <div class="blind" role="note">
+    <h2>⬛ Ngoài tầm nhìn của RTM — đọc trước mọi con số</h2>
+    <p>RTM này chỉ chứa <b>1/23 module</b>. Các con số 100% bên dưới chỉ nói về module LOGIN. Nếu tính cả <b>PRJ</b> (104 REQ chưa có TC) thì độ phủ requirement chỉ còn <b>40/144 (~28%)</b>, chưa kể CUST vì chưa đo.</p>
+    <div class="modmap" id="modmap" aria-label="Bản đồ 23 module của hệ thống"></div>
+    <div class="legend-row">
+      <span><i class="sw" style="background:var(--st-auto)"></i>Có trong RTM này</span>
+      <span><i class="sw" style="border:2px dashed var(--st-part)"></i>Có REQ + TC, chưa sinh RTM</span>
+      <span><i class="sw" style="border:2px solid var(--text-3)"></i>Có REQ, chưa có TC</span>
+      <span><i class="sw" style="border:1px solid var(--border-strong);background:var(--surface)"></i>Chưa khảo sát</span>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section>
+    <h2>Trạng thái REQ theo Story</h2>
+    <p class="sub">Mỗi thanh là một Story; độ dài đoạn = số REQ. Di chuột lên từng đoạn để xem danh sách REQ.</p>
+    <div class="card pad">
+      <div class="legend" id="stateLegend"></div>
+      <div class="bars" id="storyBars"></div>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div>
+      <h2>Việc cần làm</h2>
+      <p class="sub">Xếp theo mức nghiêm trọng, mỗi việc kèm lệnh để chạy.</p>
+      <ul class="todo" id="todo"></ul>
+    </div>
+    <div>
+      <h2>TC chưa automate</h2>
+      <p class="sub" id="unSub"></p>
+      <div class="card pad">
+        <table class="heat" id="heat" aria-label="Số TC chưa automate theo Priority và mức Automation dự kiến"></table>
+        <details class="more">
+          <summary id="unSummary"></summary>
+          <table class="plain" id="unList" style="margin-top:10px"></table>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ma trận chi tiết</h2>
+    <p class="sub">Bấm một dòng để xem từng TC, script và kết quả chạy gần nhất.</p>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Tìm REQ, TC ID hoặc tên yêu cầu…" aria-label="Tìm kiếm">
+      <select id="storySel" aria-label="Lọc theo Story"></select>
+      <span id="stateChips"></span>
+      <button class="chip" id="failChip" type="button" aria-pressed="false">❌ Chỉ REQ có TC FAIL</button>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="mx" id="mx">
+        <thead><tr><th>REQ ID</th><th>Yêu cầu</th><th>TC</th><th>Automation</th><th>Kết quả gần nhất</th><th>Trạng thái</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div>
+      <h2>REQ loại trừ có chủ đích</h2>
+      <p class="sub">Không tính vào mẫu số. Căn cứ: bảng “REQ cố ý KHÔNG có TC” trong index test case.</p>
+      <div class="card pad">
+        <table class="plain">
+          <thead><tr><th>REQ ID</th><th>Lý do</th><th>Căn cứ</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">REQ-LOGIN-27</td><td>Không kiểm chứng luồng gửi mail đặt lại với email có thật</td><td class="mono">AMB-LOGIN-04</td></tr>
+            <tr><td class="mono">REQ-LOGIN-34</td><td>Cookie ghi nhớ không bị xoá khi đăng xuất — chỉ ghi nhận hiện trạng</td><td class="mono">AMB-LOGIN-06</td></tr>
+            <tr><td class="mono">REQ-LOGIN-35</td><td>Cookie ghi nhớ thiếu cờ HttpOnly — chỉ ghi nhận hiện trạng</td><td class="mono">AMB-LOGIN-07</td></tr>
+            <tr><td class="mono">REQ-LOGIN-40</td><td>Ghi nhớ đăng nhập khi phiên hết hạn — PO xác nhận tính năng không hoạt động</td><td class="mono">AMB-LOGIN-15</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h2>Kiểm tra khác</h2>
+      <p class="sub">Các lỗi truy vết thường gặp.</p>
+      <div class="checks">
+        <div class="ck ok"><span>🔴</span><span>REQ chưa có TC</span><span class="n">0</span></div>
+        <div class="ck ok"><span>🟠</span><span>REQ chỉ có checklist</span><span class="n">0</span></div>
+        <div class="ck ok"><span>⚪</span><span>Test mồ côi (không map về REQ)</span><span class="n">0</span></div>
+        <div class="ck ok"><span>🧩</span><span>TC trỏ tới REQ không tồn tại</span><span class="n">0</span></div>
+        <div class="ck ok"><span>🗑️</span><span>Script trỏ vào TC Deprecated</span><span class="n">0</span></div>
+        <div class="ck ok"><span>⚠️</span><span>Mapping suy luận cần xác nhận</span><span class="n">0</span></div>
+        <div class="ck warn"><span>📝</span><span><code>REQ-LOGIN-43</code> lệch Story: index ghi STORY-03, file web đặt ở STORY-04 (trang này nhóm theo file web)</span><span class="n">1</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Kết quả chạy lấy từ báo cáo chạy tay <code>run_1787215085</code>, <code>run_1789759574</code> (mới nhất của từng TC). Lần chạy automation 16-10-2026 (32/32 test pass) không nằm trong <code>docs/executions/</code> nên không tính.
+    Bản markdown: <code>docs/traceability/login/traceability_matrix_login.md</code>.
+  </footer>
+</div>
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+const DATA = {"reqs":[{"id":"REQ-LOGIN-01","name":"Truy cập trang đăng nhập","story":"3.1","state":"AUTO","tcs":["CRM_LOGIN_TC_001"],"files":["auth/login.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-02","name":"Thành phần biểu mẫu đăng nhập","story":"3.1","state":"PART","tcs":["CRM_LOGIN_TC_002","CRM_LOGIN_TC_038","CRM_LOGIN_TC_042","CRM_LOGIN_TC_043","CRM_LOGIN_TC_044","CRM_LOGIN_TC_048","CRM_LOGIN_TC_049","CRM_LOGIN_TC_050"],"files":["auth/login.spec.ts"],"autoN":1,"res":{"PASS":8,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-03","name":"Tự động đặt con trỏ vào ô Email","story":"3.1","state":"AUTO","tcs":["CRM_LOGIN_TC_002"],"files":["auth/login.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-04","name":"Logo dẫn về trang chủ","story":"3.1","state":"AUTO","tcs":["CRM_LOGIN_TC_004"],"files":["auth/login.spec.ts"],"autoN":1,"res":{"PASS":0,"FAIL":1,"BLOCKED":0,"SKIPPED":0},"bug":true},{"id":"REQ-LOGIN-05","name":"Không có CAPTCHA","story":"3.1","state":"AUTO","tcs":["CRM_LOGIN_TC_003"],"files":["auth/login.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-36","name":"Không có đăng nhập mạng xã hội","story":"3.1","state":"AUTO","tcs":["CRM_LOGIN_TC_003"],"files":["auth/login.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-37","name":"Trang đăng nhập không nạp tệp JavaScript nào","story":"3.1","state":"AUTO","tcs":["CRM_LOGIN_TC_003"],"files":["auth/login.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-06","name":"Đăng nhập bằng thông tin hợp lệ","story":"3.2","state":"PART","tcs":["CRM_LOGIN_TC_005","CRM_LOGIN_TC_006","CRM_LOGIN_TC_010","CRM_LOGIN_TC_041","CRM_LOGIN_TC_050"],"files":["auth/login-success.spec.ts"],"autoN":3,"res":{"PASS":5,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-07","name":"Email không phân biệt hoa thường","story":"3.2","state":"AUTO","tcs":["CRM_LOGIN_TC_007"],"files":["auth/login-success.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-38","name":"Email bỏ qua khoảng trắng thừa đầu/cuối","story":"3.2","state":"AUTO","tcs":["CRM_LOGIN_TC_007"],"files":["auth/login-success.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-08","name":"Ghi nhớ đăng nhập sinh cookie autologin","story":"3.2","state":"AUTO","tcs":["CRM_LOGIN_TC_008"],"files":["auth/login-success.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-09","name":"Không tích Ghi nhớ thì không phát hành cookie autologin","story":"3.2","state":"AUTO","tcs":["CRM_LOGIN_TC_009"],"files":["auth/login-success.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-10","name":"Bỏ trống cả hai trường","story":"3.3","state":"PART","tcs":["CRM_LOGIN_TC_011","CRM_LOGIN_TC_043"],"files":["auth/login-validation.spec.ts"],"autoN":1,"res":{"PASS":2,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-11","name":"Bỏ trống riêng Email","story":"3.3","state":"AUTO","tcs":["CRM_LOGIN_TC_011"],"files":["auth/login-validation.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-12","name":"Bỏ trống riêng Mật khẩu","story":"3.3","state":"AUTO","tcs":["CRM_LOGIN_TC_011"],"files":["auth/login-validation.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-13","name":"Chặn email sai định dạng ngay tại trình duyệt","story":"3.3","state":"PART","tcs":["CRM_LOGIN_TC_012","CRM_LOGIN_TC_045","CRM_LOGIN_TC_046"],"files":["auth/login-validation.spec.ts"],"autoN":1,"res":{"PASS":3,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-14","name":"Thông báo khi sai thông tin đăng nhập","story":"3.3","state":"PART","tcs":["CRM_LOGIN_TC_013","CRM_LOGIN_TC_014","CRM_LOGIN_TC_017","CRM_LOGIN_TC_018","CRM_LOGIN_TC_040","CRM_LOGIN_TC_045","CRM_LOGIN_TC_047","CRM_LOGIN_TC_050"],"files":["auth/login-validation.spec.ts"],"autoN":4,"res":{"PASS":7,"FAIL":1,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-15","name":"Thông báo lỗi không tiết lộ email nào có thật","story":"3.3","state":"AUTO","tcs":["CRM_LOGIN_TC_013","CRM_LOGIN_TC_019"],"files":["auth/login-validation.spec.ts","auth/login-access.spec.ts"],"autoN":2,"res":{"PASS":2,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-41","name":"Không khoá tài khoản sau nhiều lần đăng nhập sai","story":"3.3","state":"AUTO","tcs":["CRM_LOGIN_TC_015"],"files":["auth/login-validation.spec.ts"],"autoN":1,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-16","name":"Máy chủ phải giữ lại email đã nhập sau khi đăng nhập thất bại","story":"3.3","state":"AUTO","tcs":["CRM_LOGIN_TC_016"],"files":["auth/login-validation.spec.ts"],"autoN":1,"res":{"PASS":0,"FAIL":1,"BLOCKED":0,"SKIPPED":0},"bug":true},{"id":"REQ-LOGIN-17","name":"Chặn URL nội bộ khi chưa đăng nhập","story":"3.4","state":"MANUAL","tcs":["CRM_LOGIN_TC_021"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-18","name":"Không ghi nhớ URL đích sau khi chuyển hướng","story":"3.4","state":"MANUAL","tcs":["CRM_LOGIN_TC_022"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-19","name":"Đã đăng nhập thì không vào lại trang đăng nhập","story":"3.4","state":"MANUAL","tcs":["CRM_LOGIN_TC_023"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-20","name":"Đã đăng nhập thì không vào trang Quên mật khẩu","story":"3.4","state":"MANUAL","tcs":["CRM_LOGIN_TC_023"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-43","name":"Tài khoản khách hàng không đăng nhập được vào khu quản trị","story":"3.4","state":"AUTO","tcs":["CRM_LOGIN_TC_019","CRM_LOGIN_TC_020"],"files":["auth/login-access.spec.ts"],"autoN":2,"res":{"PASS":2,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-42","name":"Phiên đăng nhập hết hạn sau 1 giờ","story":"3.4","state":"MANUAL","tcs":["CRM_LOGIN_TC_026","CRM_LOGIN_TC_051"],"files":[],"autoN":0,"res":{"PASS":2,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-21","name":"Biểu mẫu đăng nhập mang mã chống CSRF","story":"3.4","state":"MANUAL","tcs":["CRM_LOGIN_TC_024"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-22","name":"Từ chối yêu cầu có mã CSRF sai","story":"3.4","state":"MANUAL","tcs":["CRM_LOGIN_TC_025"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-44","name":"Ép truy cập qua HTTPS","story":"3.4","state":"MANUAL","tcs":["CRM_LOGIN_TC_039"],"files":[],"autoN":0,"res":{"PASS":0,"FAIL":1,"BLOCKED":0,"SKIPPED":0},"bug":true},{"id":"REQ-LOGIN-23","name":"Truy cập trang Quên mật khẩu","story":"3.5","state":"MANUAL","tcs":["CRM_LOGIN_TC_027"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-24","name":"Trang Quên mật khẩu không có lối quay lại đăng nhập","story":"3.5","state":"MANUAL","tcs":["CRM_LOGIN_TC_027"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-25","name":"Gửi biểu mẫu Quên mật khẩu khi bỏ trống email","story":"3.5","state":"MANUAL","tcs":["CRM_LOGIN_TC_028"],"files":[],"autoN":0,"res":{"PASS":0,"FAIL":1,"BLOCKED":0,"SKIPPED":0},"bug":true},{"id":"REQ-LOGIN-26","name":"Email không tồn tại trong hệ thống","story":"3.5","state":"MANUAL","tcs":["CRM_LOGIN_TC_029","CRM_LOGIN_TC_030"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":1,"BLOCKED":0,"SKIPPED":0},"bug":true},{"id":"REQ-LOGIN-27","name":"Email tồn tại thì gửi liên kết đặt lại mật khẩu","story":"3.5","state":"EXCL","tcs":[],"files":[],"autoN":0,"res":{"PASS":0,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-28","name":"Liên kết đặt lại mật khẩu sai/hết hạn","story":"3.5","state":"MANUAL","tcs":["CRM_LOGIN_TC_031"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-29","name":"Mỗi viewport có một lối đăng xuất dùng được","story":"3.6","state":"MANUAL","tcs":["CRM_LOGIN_TC_032","CRM_LOGIN_TC_033"],"files":[],"autoN":0,"res":{"PASS":2,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-30","name":"Cảnh báo khi còn bộ đếm giờ đang chạy","story":"3.6","state":"MANUAL","tcs":["CRM_LOGIN_TC_034"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-31","name":"Đăng xuất ngay khi không có bộ đếm giờ","story":"3.6","state":"MANUAL","tcs":["CRM_LOGIN_TC_035"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-32","name":"Kết thúc phiên và về trang đăng nhập","story":"3.6","state":"MANUAL","tcs":["CRM_LOGIN_TC_036"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-33","name":"URL nội bộ bị chặn lại sau khi đăng xuất","story":"3.6","state":"MANUAL","tcs":["CRM_LOGIN_TC_036"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-34","name":"Cookie autologin không bị xoá khỏi trình duyệt khi đăng xuất","story":"3.6","state":"EXCL","tcs":[],"files":[],"autoN":0,"res":{"PASS":0,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-35","name":"Cookie autologin đọc được bằng JavaScript","story":"3.6","state":"EXCL","tcs":[],"files":[],"autoN":0,"res":{"PASS":0,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-39","name":"Cookie autologin không tự đăng nhập lại sau khi đăng xuất chủ động","story":"3.6","state":"MANUAL","tcs":["CRM_LOGIN_TC_037"],"files":[],"autoN":0,"res":{"PASS":1,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false},{"id":"REQ-LOGIN-40","name":"Cookie autologin khi phiên hết hạn tự nhiên","story":"3.6","state":"EXCL","tcs":[],"files":[],"autoN":0,"res":{"PASS":0,"FAIL":0,"BLOCKED":0,"SKIPPED":0},"bug":false}],"tcs":[{"id":"CRM_LOGIN_TC_001","scenario":"Mở trang đăng nhập khi chưa có phiên thì thấy biểu mẫu đăng nhập","priority":"Critical","automation":"Yes","scripted":true,"files":["auth/login.spec.ts"],"reqs":["REQ-LOGIN-01"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_002","scenario":"Biểu mẫu đăng nhập đủ thành phần và đúng trạng thái mặc định","priority":"Critical","automation":"Yes","scripted":true,"files":["auth/login.spec.ts"],"reqs":["REQ-LOGIN-02","REQ-LOGIN-03"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_003","scenario":"Trang đăng nhập không có CAPTCHA, không đăng nhập bên thứ ba, không nạp JavaScript","priority":"Medium","automation":"Yes","scripted":true,"files":["auth/login.spec.ts"],"reqs":["REQ-LOGIN-05","REQ-LOGIN-36","REQ-LOGIN-37"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_004","scenario":"Bấm logo trên trang đăng nhập thì về trang chủ công khai","priority":"Low","automation":"Yes","scripted":true,"files":["auth/login.spec.ts"],"reqs":["REQ-LOGIN-04"],"result":"FAIL","run":"run_1787215085","bug":"BUG_login_1787226513_TC004","closedBug":null},{"id":"CRM_LOGIN_TC_005","scenario":"Đăng nhập bằng tài khoản Admin hợp lệ thì vào được Dashboard","priority":"Critical","automation":"Yes","scripted":true,"files":["auth/login-success.spec.ts"],"reqs":["REQ-LOGIN-06"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_006","scenario":"Đăng nhập bằng tài khoản Project Manager thì vào Dashboard với bộ menu rút gọn","priority":"High","automation":"Yes","scripted":true,"files":["auth/login-success.spec.ts"],"reqs":["REQ-LOGIN-06"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_007","scenario":"Email được chuẩn hoá — khác kiểu chữ và thừa khoảng trắng vẫn đăng nhập được","priority":"High","automation":"Yes","scripted":true,"files":["auth/login-success.spec.ts"],"reqs":["REQ-LOGIN-07","REQ-LOGIN-38"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_008","scenario":"Tích Ghi nhớ đăng nhập thì hệ thống phát hành cookie ghi nhớ","priority":"High","automation":"Partial","scripted":true,"files":["auth/login-success.spec.ts"],"reqs":["REQ-LOGIN-08"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_009","scenario":"Không tích Ghi nhớ đăng nhập thì hoàn toàn không phát hành cookie ghi nhớ","priority":"High","automation":"Partial","scripted":true,"files":["auth/login-success.spec.ts"],"reqs":["REQ-LOGIN-09"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_010","scenario":"Bấm nút Login hai lần liên tiếp vẫn vào đúng Dashboard, không sinh trang lỗi","priority":"Medium","automation":"Partial","scripted":true,"files":["auth/login-success.spec.ts"],"reqs":["REQ-LOGIN-06"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_011","scenario":"Kiểm tra trường bắt buộc trên biểu mẫu đăng nhập","priority":"Critical","automation":"Yes","scripted":true,"files":["auth/login-validation.spec.ts"],"reqs":["REQ-LOGIN-10","REQ-LOGIN-11","REQ-LOGIN-12"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_012","scenario":"Email sai định dạng bị trình duyệt chặn ngay, biểu mẫu không gửi đi","priority":"High","automation":"Yes","scripted":true,"files":["auth/login-validation.spec.ts"],"reqs":["REQ-LOGIN-13"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_013","scenario":"Sai thông tin đăng nhập trả về một thông báo chung, không tiết lộ email nào có thật","priority":"Critical","automation":"Yes","scripted":true,"files":["auth/login-validation.spec.ts"],"reqs":["REQ-LOGIN-14","REQ-LOGIN-15"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_014","scenario":"Mật khẩu đúng nhưng sai kiểu chữ hoa/thường thì bị từ chối","priority":"Medium","automation":"Yes","scripted":true,"files":["auth/login-validation.spec.ts"],"reqs":["REQ-LOGIN-14"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_015","scenario":"Đăng nhập sai nhiều lần liên tiếp không làm khoá tài khoản và không chặn theo IP","priority":"High","automation":"Yes","scripted":true,"files":["auth/login-validation.spec.ts"],"reqs":["REQ-LOGIN-41"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_016","scenario":"🐞 Sau khi đăng nhập thất bại, ô Email phải còn giữ email vừa nhập","priority":"High","automation":"Yes","scripted":true,"files":["auth/login-validation.spec.ts"],"reqs":["REQ-LOGIN-16"],"result":"FAIL","run":"run_1787215085","bug":"BUG_login_1787226514_TC016","closedBug":null},{"id":"CRM_LOGIN_TC_017","scenario":"Chuỗi tấn công nhập vào ô Password không vượt qua được xác thực và không được thực thi","priority":"Critical","automation":"Yes","scripted":true,"files":["auth/login-validation.spec.ts"],"reqs":["REQ-LOGIN-14"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_018","scenario":"Mật khẩu chứa ký tự đa ngôn ngữ và emoji không làm hệ thống lỗi máy chủ","priority":"Medium","automation":"Yes","scripted":true,"files":["auth/login-validation.spec.ts"],"reqs":["REQ-LOGIN-14"],"result":"FAIL","run":"run_1787215085","bug":null,"closedBug":"BUG_login_1787226515_TC018"},{"id":"CRM_LOGIN_TC_019","scenario":"Tài khoản khách hàng hợp lệ bị từ chối ở khu quản trị mà không lộ ra rằng email đó có tài khoản","priority":"High","automation":"Yes","scripted":true,"files":["auth/login-access.spec.ts"],"reqs":["REQ-LOGIN-43","REQ-LOGIN-15"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_020","scenario":"Đang có phiên cổng khách hàng hợp lệ vẫn không mở được URL nội bộ khu quản trị","priority":"High","automation":"Yes","scripted":true,"files":["auth/login-access.spec.ts"],"reqs":["REQ-LOGIN-43"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_021","scenario":"Mở thẳng URL nội bộ khi chưa đăng nhập thì bị đưa về trang đăng nhập","priority":"Critical","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-17"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_022","scenario":"Bị chuyển về trang đăng nhập thì không giữ lại URL đích ban đầu","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-18"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_023","scenario":"Đang có phiên thì mở trang đăng nhập hoặc Quên mật khẩu đều bị đưa về Dashboard","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-19","REQ-LOGIN-20"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_024","scenario":"Biểu mẫu đăng nhập mang mã chống CSRF đúng hình thái và gửi kèm khi submit","priority":"High","automation":"Partial","scripted":false,"files":[],"reqs":["REQ-LOGIN-21"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_025","scenario":"Gửi biểu mẫu với mã CSRF không hợp lệ thì bị chặn, không xử lý đăng nhập","priority":"Critical","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-22"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_026","scenario":"Phiên đăng nhập hết hạn sau 1 giờ không thao tác","priority":"High","automation":"No","scripted":false,"files":[],"reqs":["REQ-LOGIN-42"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_051","scenario":"Đang thao tác thì phiên được gia hạn — không bị đăng xuất dù đã quá 1 giờ kể từ lúc đăng nhập","priority":"High","automation":"No","scripted":false,"files":[],"reqs":["REQ-LOGIN-42"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_027","scenario":"Trang Quên mật khẩu mở đúng, đủ thành phần và không có lối quay lại đăng nhập","priority":"High","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-23","REQ-LOGIN-24"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_028","scenario":"🐞 Bỏ trống email rồi bấm Confirm phải báo thiếu trường bắt buộc","priority":"High","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-25"],"result":"FAIL","run":"run_1787215085","bug":"BUG_login_1787226516_TC028","closedBug":null},{"id":"CRM_LOGIN_TC_029","scenario":"Nhập email không tồn tại trong hệ thống thì báo không tìm thấy","priority":"High","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-26"],"result":"FAIL","run":"run_1787215085","bug":"BUG_login_1787226517_TC029","closedBug":null},{"id":"CRM_LOGIN_TC_030","scenario":"Email sai định dạng ở trang Quên mật khẩu bị trình duyệt chặn","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-26"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_031","scenario":"Mở liên kết đặt lại mật khẩu không hợp lệ thì máy chủ trả lỗi 500 với thân rỗng","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-28"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_032","scenario":"Ở viewport desktop chỉ có một lối đăng xuất dùng được — trong menu ảnh đại diện","priority":"Critical","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-29"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_033","scenario":"Ở viewport mobile đăng xuất được qua menu điều hướng thu gọn","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-29"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_034","scenario":"Đăng xuất trong lúc còn bộ đếm giờ công việc đang chạy thì phải xác nhận trước","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-30"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_035","scenario":"Không có bộ đếm giờ nào chạy thì bấm Logout đi thẳng, không hỏi lại","priority":"High","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-31"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_036","scenario":"Đăng xuất kết thúc phiên và URL nội bộ không dùng lại được, kể cả bằng nút Back","priority":"Critical","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-32","REQ-LOGIN-33"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_037","scenario":"Cookie ghi nhớ còn lại sau khi đăng xuất chủ động không tự đăng nhập lại","priority":"High","automation":"Partial","scripted":false,"files":[],"reqs":["REQ-LOGIN-39"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_038","scenario":"Điều hướng và gửi biểu mẫu đăng nhập hoàn toàn bằng bàn phím, có viền tiêu điểm rõ ràng","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-02"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_039","scenario":"🐞 Truy cập trang đăng nhập qua HTTP thuần phải bị ép chuyển hướng sang HTTPS","priority":"High","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-44"],"result":"FAIL","run":"run_1787215085","bug":"BUG_login_1785678750_TC039","closedBug":null},{"id":"CRM_LOGIN_TC_040","scenario":"Mất kết nối mạng giữa lúc gửi biểu mẫu thì không tạo phiên","priority":"Medium","automation":"Partial","scripted":false,"files":[],"reqs":["REQ-LOGIN-14"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_041","scenario":"Đăng nhập trên đường truyền chậm vẫn hoàn tất và vào đúng Dashboard","priority":"Low","automation":"Partial","scripted":false,"files":[],"reqs":["REQ-LOGIN-06"],"result":"PASS","run":"run_1787215085","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_042","scenario":"Ô Mật khẩu che ký tự, dán được, và biểu mẫu không có nút hiện/ẩn mật khẩu","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-02"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_043","scenario":"Nút Login luôn bấm được, không tự khoá theo trạng thái biểu mẫu","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-02","REQ-LOGIN-10"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_044","scenario":"Biểu mẫu không chặn tính năng tự điền và đề nghị lưu mật khẩu của trình duyệt","priority":"Low","automation":"No","scripted":false,"files":[],"reqs":["REQ-LOGIN-02"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_045","scenario":"Email có phần trước dấu @ dài tới đúng mốc 64 ký tự vẫn được coi là đúng định dạng","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-13","REQ-LOGIN-14"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_046","scenario":"Email có phần trước dấu @ vượt mốc 64 ký tự bị máy chủ chặn ở bước kiểm tra định dạng","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-13"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_047","scenario":"Mật khẩu rất dài không làm hệ thống lỗi và vẫn trả đúng thông báo xác thực","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-14"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_048","scenario":"Ô Email không tự cắt bớt ký tự khi dán chuỗi dài vào","priority":"Low","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-02"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_049","scenario":"Trang đăng nhập giữ đúng bố cục ở mọi kích thước màn hình đã chốt","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-02"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null},{"id":"CRM_LOGIN_TC_050","scenario":"Luồng đăng nhập chạy được trên các trình duyệt đã cam kết hỗ trợ","priority":"Medium","automation":"Yes","scripted":false,"files":[],"reqs":["REQ-LOGIN-02","REQ-LOGIN-06","REQ-LOGIN-14"],"result":"PASS","run":"run_1789759574","bug":null,"closedBug":null}]};
+
+const STATES = {
+  AUTO: { label: 'Đã automate', icon: '●', color: 'var(--st-auto)' },
+  PART: { label: 'Automate một phần', icon: '◐', color: 'var(--st-part)' },
+  MANUAL: { label: 'Thủ công', icon: '○', color: 'var(--st-manual)' },
+  EXCL: { label: 'Loại trừ', icon: '–', color: 'var(--st-excl)' },
+};
+const STATE_ORDER = ['AUTO', 'PART', 'MANUAL', 'EXCL'];
+const STORIES = {
+  '3.1': ['STORY-LOGIN-01', 'Giao diện trang đăng nhập'],
+  '3.2': ['STORY-LOGIN-02', 'Đăng nhập thành công'],
+  '3.3': ['STORY-LOGIN-03', 'Kiểm tra dữ liệu & đăng nhập thất bại'],
+  '3.4': ['STORY-LOGIN-04', 'Bảo vệ phiên & điều hướng'],
+  '3.5': ['STORY-LOGIN-05', 'Quên mật khẩu'],
+  '3.6': ['STORY-LOGIN-06', 'Đăng xuất & cookie ghi nhớ'],
+};
+const PRIOS = ['Critical', 'High', 'Medium', 'Low'];
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const tcById = Object.fromEntries(DATA.tcs.map((t) => [t.id, t]));
+const short = (id) => id.replace('CRM_LOGIN_', '');
+
+/* ---------- Theme ---------- */
+(function theme() {
+  const btn = $('#themeBtn');
+  const root = document.documentElement;
+  const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const sync = () => { btn.textContent = isDark() ? 'Giao diện sáng' : 'Giao diện tối'; };
+  try { const saved = localStorage.getItem('rtm-theme'); if (saved) root.dataset.theme = saved; } catch (e) { /* bỏ qua */ }
+  sync();
+  btn.addEventListener('click', () => {
+    root.dataset.theme = isDark() ? 'light' : 'dark';
+    try { localStorage.setItem('rtm-theme', root.dataset.theme); } catch (e) { /* bỏ qua */ }
+    sync();
+  });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', sync);
+})();
+
+/* ---------- Tooltip ---------- */
+const tip = $('#tip');
+function bindTip(el, html) {
+  el.addEventListener('mouseenter', () => { tip.innerHTML = html; tip.style.opacity = 1; });
+  el.addEventListener('mousemove', (e) => {
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    let x = e.clientX + 14, y = e.clientY + 14;
+    if (x + w > innerWidth - 8) x = e.clientX - w - 14;
+    if (y + h > innerHeight - 8) y = e.clientY - h - 14;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  });
+  el.addEventListener('mouseleave', () => { tip.style.opacity = 0; });
+}
+
+/* ---------- Derived numbers ---------- */
+const inScope = DATA.reqs.filter((r) => r.state !== 'EXCL');
+const reqWithTc = inScope.filter((r) => r.tcs.length).length;
+const excl = DATA.reqs.length - inScope.length;
+const scripted = DATA.tcs.filter((t) => t.scripted).length;
+const ran = DATA.tcs.filter((t) => t.result);
+const pass = ran.filter((t) => t.result === 'PASS').length;
+const fail = ran.filter((t) => t.result === 'FAIL');
+const openBugs = new Set(DATA.tcs.map((t) => t.bug).filter(Boolean));
+const pct = (n, m) => (m ? Math.round((n / m) * 100) : 0);
+
+$('#lede').innerHTML = `<b>${reqWithTc}/${inScope.length}</b> REQ trong phạm vi đã có test case · <b>${scripted}/${DATA.tcs.length}</b> TC có script automation · lần chạy tay gần nhất <b>${pass} PASS / ${fail.length} FAIL</b>, trong đó ${fail.filter((t) => t.bug).length} FAIL đã có bug đang mở · ${excl} REQ loại trừ theo quyết định PO.`;
+
+/* ---------- Module map ---------- */
+const MODULES = [
+  ['LOGIN', 'in', '44 REQ · 51 TC'], ['CUST', 'rtm', '84 REQ · 129 TC'], ['PRJ', 'req', '104 REQ'],
+  ...['CONT', 'LEAD', 'TASK', 'EST', 'PROP', 'INV', 'PAY', 'CN', 'SUB', 'CTR', 'EXP', 'ITEM', 'TICK', 'ESTREQ', 'KB', 'REP', 'DASH', 'TODO', 'REM', 'PROF'].map((m) => [m, '', 'chưa khảo sát']),
+];
+$('#modmap').innerHTML = MODULES.map(([m, cls, note]) => `<div class="mod ${cls}">${m}<small>${note}</small></div>`).join('');
+
+/* ---------- KPI ---------- */
+const kpis = [
+  { lbl: 'Độ phủ requirement', n: reqWithTc, m: inScope.length, note: `+${excl} REQ loại trừ, không tính mẫu số`, parts: [[reqWithTc, 'var(--st-auto)']] },
+  { lbl: 'TC có script automation', n: scripted, m: DATA.tcs.length, note: `${DATA.tcs.length - scripted} TC còn chạy tay`, parts: [[scripted, 'var(--st-auto)']] },
+  { lbl: 'Pass rate lần chạy gần nhất', n: pass, m: ran.length, note: `❌ ${fail.length} FAIL · ${DATA.tcs.length - ran.length} TC chưa chạy`, parts: [[pass, 'var(--good)'], [fail.length, 'var(--critical)']] },
+  { lbl: 'Bug đang mở', raw: openBugs.size, note: 'gắn với TC FAIL — chờ Dev fix', parts: null },
+];
+$('#kpis').innerHTML = kpis.map((k) => {
+  const val = k.raw !== undefined ? `${k.raw}` : `${pct(k.n, k.m)}%<small> · ${k.n}/${k.m}</small>`;
+  const meter = k.parts ? `<div class="meter" role="img" aria-label="${k.lbl}: ${k.n}/${k.m}">${k.parts.map(([n, c]) => `<i style="width:${(n / k.m) * 100}%;background:${c}"></i>`).join('')}</div>` : '';
+  return `<div class="card kpi"><div class="lbl">${k.lbl}</div><div class="val">${val}</div><div class="note">${k.note}</div>${meter}</div>`;
+}).join('');
+
+/* ---------- Story bars ---------- */
+$('#stateLegend').innerHTML = STATE_ORDER.map((s) => `<span><i class="sw" style="background:${STATES[s].color}"></i>${STATES[s].label}</span>`).join('');
+const storyKeys = Object.keys(STORIES);
+const maxTotal = Math.max(...storyKeys.map((k) => DATA.reqs.filter((r) => r.story === k).length));
+const bars = $('#storyBars');
+function barRow(name, small, list, scale) {
+  const total = list.length;
+  const nameEl = document.createElement('div');
+  nameEl.className = 'name';
+  nameEl.innerHTML = `${esc(name)}<small>${esc(small)}</small>`;
+  const track = document.createElement('div');
+  track.className = 'track';
+  track.style.width = `${(total / scale) * 100}%`;
+  track.setAttribute('role', 'img');
+  track.setAttribute('aria-label', `${name}: ` + STATE_ORDER.map((s) => `${list.filter((r) => r.state === s).length} ${STATES[s].label}`).join(', '));
+  STATE_ORDER.forEach((s) => {
+    const items = list.filter((r) => r.state === s);
+    if (!items.length) return;
+    const seg = document.createElement('div');
+    seg.className = `seg ${s}`;
+    seg.style.flex = `${items.length} 1 0`;
+    seg.textContent = items.length;
+    bindTip(seg, `<b>${STATES[s].label} · ${items.length} REQ</b><br>${items.map((r) => r.id.replace('REQ-LOGIN-', 'REQ-')).join(', ')}`);
+    track.appendChild(seg);
+  });
+  const tot = document.createElement('div');
+  tot.className = 'tot';
+  tot.textContent = `${total} REQ`;
+  bars.append(nameEl, track, tot);
+}
+storyKeys.forEach((k) => barRow(STORIES[k][1], STORIES[k][0], DATA.reqs.filter((r) => r.story === k), maxTotal));
+const sep = document.createElement('div'); sep.className = 'sep'; bars.appendChild(sep);
+barRow('Toàn module', `${DATA.reqs.length} REQ`, DATA.reqs, DATA.reqs.length);
+
+/* ---------- Todo ---------- */
+const failOpen = fail.filter((t) => t.bug);
+const failClosed = fail.filter((t) => !t.bug && t.closedBug);
+const autoNext = DATA.tcs.filter((t) => !t.scripted && t.automation === 'Yes' && (t.priority === 'Critical' || t.priority === 'High'));
+const todos = [
+  { ic: '❌', cls: 'crit', h: `${failOpen.length} TC FAIL đã có bug đang mở`, p: failOpen.map((t) => short(t.id)).join(', ') + ' — retest khi Dev báo fix.', cmd: '/retest-fixed-bugs' },
+  { ic: '🔁', cls: 'warn', h: `${failClosed.length} TC FAIL chỉ có bug đã đóng`, p: `${failClosed.map((t) => short(t.id)).join(', ')} — bug đóng “không phải lỗi”, biến thể gây FAIL đã bỏ khỏi TC → kết quả đã lỗi thời, cần chạy lại.`, cmd: '/execute-test-cases' },
+  { ic: '⚙️', cls: 'info', h: `Automate ${autoNext.length} TC Critical/High`, p: autoNext.map((t) => short(t.id)).join(', ') + ' — đã chấm Automation = Yes nhưng chưa có script.', cmd: '/generate-automation-from-testcases' },
+  { ic: '📝', cls: 'warn', h: 'Thống nhất Story của REQ-LOGIN-43', p: 'Index ghi STORY-03, file web đặt ở STORY-04. Không đổi chỉ số, chỉ đổi nhóm hiển thị.', cmd: '/update-requirements-from-ticket' },
+  { ic: '🕓', cls: '', h: 'Mở rộng RTM sang module khác', p: 'CUST đã có 84 REQ + 129 TC nhưng chưa có RTM; PRJ còn 104 REQ chưa có TC.', cmd: '/generate-traceability-matrix customers' },
+];
+$('#todo').innerHTML = todos.filter((t) => !/^0 /.test(t.h)).map((t) => `<li><div class="ic ${t.cls}" aria-hidden="true">${t.ic}</div><div><h3>${esc(t.h)}</h3><p>${esc(t.p)}</p><code class="cmd">${esc(t.cmd)}</code></div></li>`).join('');
+
+/* ---------- Heat grid ---------- */
+const un = DATA.tcs.filter((t) => !t.scripted);
+const AUTOS = ['Yes', 'Partial', 'No'];
+const cnt = (p, a) => un.filter((t) => t.priority === p && t.automation === a).length;
+const maxCell = Math.max(...PRIOS.flatMap((p) => AUTOS.map((a) => cnt(p, a))));
+const lvl = (n) => (n === 0 ? 0 : Math.min(4, Math.ceil((n / maxCell) * 4)));
+$('#unSub').textContent = `${un.length}/${DATA.tcs.length} TC chưa có script — theo Priority × mức Automation dự kiến trong bộ TC.`;
+$('#heat').innerHTML = `<thead><tr><th>Priority</th>${AUTOS.map((a) => `<th class="c">${a}</th>`).join('')}<th class="c">Tổng</th></tr></thead><tbody>` +
+  PRIOS.map((p) => `<tr><th>${p}</th>${AUTOS.map((a) => { const n = cnt(p, a); return `<td class="h${lvl(n)}" title="${p} · Automation ${a}: ${n} TC">${n}</td>`; }).join('')}<td class="tot">${un.filter((t) => t.priority === p).length}</td></tr>`).join('') +
+  `<tr><th>Tổng</th>${AUTOS.map((a) => `<td class="tot">${un.filter((t) => t.automation === a).length}</td>`).join('')}<td class="tot">${un.length}</td></tr></tbody>`;
+$('#unSummary').textContent = `Xem danh sách ${un.length} TC`;
+const prioRank = (p) => PRIOS.indexOf(p);
+$('#unList').innerHTML = '<thead><tr><th>TC</th><th>Priority</th><th>Dự kiến</th><th>Kết quả</th></tr></thead><tbody>' +
+  un.slice().sort((a, b) => prioRank(a.priority) - prioRank(b.priority) || a.id.localeCompare(b.id))
+    .map((t) => `<tr><td><span class="mono">${short(t.id)}</span><br><span class="muted">${esc(t.scenario)}</span></td><td>${t.priority}</td><td>${t.automation}</td><td>${resBadge(t)}</td></tr>`).join('') + '</tbody>';
+
+/* ---------- Matrix ---------- */
+function resBadge(t) {
+  if (!t.result) return '<span class="r none">— chưa chạy</span>';
+  if (t.result === 'PASS') return '<span class="r pass">✓ PASS</span>';
+  return `<span class="r fail">✕ FAIL${t.bug ? ' 🐞' : ''}</span>`;
+}
+function reqRes(r) {
+  const out = [];
+  if (r.res.PASS) out.push(`<span class="r pass">✓ ${r.res.PASS} PASS</span>`);
+  if (r.res.FAIL) out.push(`<span class="r fail">✕ ${r.res.FAIL} FAIL${r.bug ? ' 🐞' : ''}</span>`);
+  return out.length ? `<span class="res">${out.join('')}</span>` : '<span class="muted">—</span>';
+}
+const state = { q: '', story: '', states: new Set(STATE_ORDER), failOnly: false };
+$('#storySel').innerHTML = '<option value="">Tất cả Story</option>' + storyKeys.map((k) => `<option value="${k}">${STORIES[k][0].replace('STORY-LOGIN-', 'Story ')} · ${STORIES[k][1]}</option>`).join('');
+$('#stateChips').innerHTML = STATE_ORDER.map((s) => `<button class="chip" type="button" data-s="${s}" aria-pressed="true"><i class="sw" style="background:${STATES[s].color}"></i>${STATES[s].label}</button>`).join(' ');
+document.querySelectorAll('#stateChips .chip').forEach((b) => b.addEventListener('click', () => {
+  const s = b.dataset.s;
+  if (state.states.has(s)) state.states.delete(s); else state.states.add(s);
+  b.setAttribute('aria-pressed', state.states.has(s));
+  render();
+}));
+$('#failChip').addEventListener('click', (e) => { state.failOnly = !state.failOnly; e.currentTarget.setAttribute('aria-pressed', state.failOnly); render(); });
+$('#q').addEventListener('input', (e) => { state.q = e.target.value.trim().toLowerCase(); render(); });
+$('#storySel').addEventListener('change', (e) => { state.story = e.target.value; render(); });
+
+function match(r) {
+  if (!state.states.has(r.state)) return false;
+  if (state.story && r.story !== state.story) return false;
+  if (state.failOnly && !r.res.FAIL) return false;
+  if (state.q) {
+    const hay = [r.id, r.name, ...r.tcs, ...r.tcs.map((id) => (tcById[id] || {}).scenario || '')].join(' ').toLowerCase();
+    if (!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+function render() {
+  const tb = $('#mx tbody');
+  const rows = [];
+  let shown = 0;
+  storyKeys.forEach((k) => {
+    const list = DATA.reqs.filter((r) => r.story === k && match(r));
+    if (!list.length) return;
+    shown += list.length;
+    const all = DATA.reqs.filter((r) => r.story === k);
+    const auto = all.filter((r) => r.state === 'AUTO').length;
+    rows.push(`<tr class="story"><td colspan="6">${STORIES[k][1]}<span>${STORIES[k][0]} · ${all.length} REQ · ${auto} đã automate</span></td></tr>`);
+    list.forEach((r) => {
+      const st = STATES[r.state];
+      const auto = r.files.length ? `<span class="file mono">${r.files.map(esc).join('<br>')}</span><br><span class="muted">${r.autoN}/${r.tcs.length} TC</span>` : '<span class="muted">—</span>';
+      const tcs = r.tcs.length ? `${r.tcs.length} TC<br><span class="muted mono">${r.tcs.map(short).map((s) => s.replace('TC_', '')).join(', ')}</span>` : '<span class="muted">—</span>';
+      rows.push(`<tr class="req" data-id="${r.id}" tabindex="0" aria-expanded="false"><td class="mono"><span class="caret">▸</span> ${r.id}</td><td>${esc(r.name)}</td><td>${tcs}</td><td>${auto}</td><td>${reqRes(r)}</td><td><span class="pill ${r.state}">${st.icon} ${st.label}</span></td></tr>`);
+      const detail = r.tcs.length
+        ? `<div class="tclist">${r.tcs.map((id) => { const t = tcById[id]; return `<div class="tcrow"><span class="mono">${id}</span><span class="sc">${esc(t.scenario)}</span><span class="prio">${t.priority}</span><span class="file mono">${t.scripted ? '⚙️ ' + esc(t.files.join(', ')) : '<span class="muted">✋ chạy tay</span>'}</span>${resBadge(t)}</div>`; }).join('')}</div>`
+        : '<div class="tclist"><div class="muted">Không có TC — REQ loại trừ có chủ đích (xem bảng bên dưới).</div></div>';
+      rows.push(`<tr class="detail" hidden><td colspan="6">${detail}</td></tr>`);
+    });
+  });
+  tb.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="6" class="empty">Không có REQ nào khớp bộ lọc.</td></tr>';
+  $('#count').textContent = `${shown}/${DATA.reqs.length} REQ`;
+}
+function toggleRow(tr) {
+  const d = tr.nextElementSibling;
+  d.hidden = !d.hidden;
+  tr.classList.toggle('open', !d.hidden);
+  tr.setAttribute('aria-expanded', !d.hidden);
+}
+$('#mx tbody').addEventListener('click', (e) => { const tr = e.target.closest('tr.req'); if (tr) toggleRow(tr); });
+$('#mx tbody').addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('tr.req')) { e.preventDefault(); toggleRow(e.target); } });
+render();
+</script>
+</body>
+</html>

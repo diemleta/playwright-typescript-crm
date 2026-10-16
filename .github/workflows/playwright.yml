@@ -1,0 +1,55 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: playwright-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Số luồng song song — hạ xuống 2–3 nếu runner 2 vCPU chạy chập chờn.
+  # Sửa đúng dòng này, KHÔNG đụng playwright.config.ts
+  WORKERS: 3
+  BROWSERS: chrome
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run tests
+        env:
+          BASE_URL: ${{ vars.BASE_URL || 'https://crm.anhtester.com/authentication/login' }}  
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          HEADLESS: 'true'
+        run: npx playwright test
+
+      - name: Sinh Allure report
+        if: always()
+        # CLI đã nằm trong devDependencies — CI không cài Allure riêng
+        run: npm run report:generate
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: reports/
+          retention-days: 14

@@ -1,0 +1,181 @@
+{
+  "loginPage": {
+    "expectedHttpStatus": 200,
+    "expectedTabTitle": "Perfex CRM | Anh Tester Demo - Login",
+    "expectedBodyClass": "login_admin",
+    "formMethod": "post",
+    "emailAutofocus": "1",
+    "labels": {
+      "email": "Email Address",
+      "password": "Password",
+      "remember": "Remember me"
+    },
+    "loginButtonColors": {
+      "background": "rgb(37, 99, 235)",
+      "text": "rgb(255, 255, 255)"
+    },
+    "maskedPasswordSample": "Abc12345",
+    "publicHomePath": "/"
+  },
+  "messages": {
+    "passwordRequired": "The Password field is required.",
+    "emailRequired": "The Email Address field is required.",
+    "invalidCredentials": "Invalid email or password",
+    "lockoutKeywords": "locked|blocked|too many|try again in",
+    "databaseErrorPattern": "SQL syntax|mysqli|Database Error|Query error|Uncaught exception"
+  },
+  "requiredFieldVariants": [
+    {
+      "variant": "a",
+      "label": "Rỗng cả hai trường",
+      "email": "",
+      "password": "",
+      "expectedErrors": [
+        "passwordRequired",
+        "emailRequired"
+      ]
+    },
+    {
+      "variant": "b",
+      "label": "Rỗng riêng Email",
+      "email": "",
+      "password": "Abc12345",
+      "expectedErrors": [
+        "emailRequired"
+      ]
+    },
+    {
+      "variant": "c",
+      "label": "Rỗng riêng Password",
+      "email": "admin@example.com",
+      "password": "",
+      "expectedErrors": [
+        "passwordRequired"
+      ]
+    },
+    {
+      "variant": "d",
+      "label": "Toàn khoảng trắng",
+      "email": "   ",
+      "password": "   ",
+      "expectedErrors": [
+        "passwordRequired",
+        "emailRequired"
+      ]
+    }
+  ],
+  "malformedEmailVariants": [
+    {
+      "variant": "a",
+      "label": "Thiếu @",
+      "email": "abc"
+    },
+    {
+      "variant": "b",
+      "label": "Thiếu tên miền",
+      "email": "abc@"
+    },
+    {
+      "variant": "c",
+      "label": "Thiếu phần trước @",
+      "email": "@example.com"
+    },
+    {
+      "variant": "d",
+      "label": "Nhiều @",
+      "email": "a@b@example.com"
+    },
+    {
+      "variant": "e",
+      "label": "Chuỗi tiêm SQL",
+      "email": "admin@example.com' OR '1'='1"
+    }
+  ],
+  "malformedEmailPassword": "Abc12345",
+  "wrongPassword": "SaiMatKhau_20260820",
+  "anyPassword": "BatKyMatKhau@123",
+  "ipLockoutPassword": "Sai@123",
+  "attackVariants": [
+    {
+      "variant": "a",
+      "label": "XSS",
+      "useNonExistentEmail": true,
+      "password": "<script>alert(1)</script>"
+    },
+    {
+      "variant": "b",
+      "label": "Tiêm SQL",
+      "useNonExistentEmail": false,
+      "password": "' OR 1=1--"
+    }
+  ],
+  "unicodePassword": "MậtKhẩuTiếngViệt😀🎉",
+  "emailNormalizationVariants": [
+    {
+      "variant": "a",
+      "label": "Lẫn hoa thường",
+      "transform": "mixed",
+      "sendRaw": false
+    },
+    {
+      "variant": "b",
+      "label": "Toàn chữ HOA",
+      "transform": "upper",
+      "sendRaw": false
+    },
+    {
+      "variant": "c",
+      "label": "2 dấu cách mỗi đầu",
+      "transform": "padBoth",
+      "sendRaw": true
+    },
+    {
+      "variant": "d",
+      "label": "1 dấu cách cuối",
+      "transform": "padEnd",
+      "sendRaw": true
+    }
+  ],
+  "lockoutVariants": [
+    {
+      "variant": "a",
+      "label": "Khoá theo email — 6 lần cùng email Admin",
+      "attempts": 6,
+      "sameEmail": true
+    },
+    {
+      "variant": "b",
+      "label": "Khoá theo IP — 5 lần với 5 email khác nhau",
+      "attempts": 5,
+      "sameEmail": false
+    }
+  ],
+  "dashboard": {
+    "path": "/admin/",
+    "titleContains": "Dashboard",
+    "adminBodyClasses": [
+      "app",
+      "admin",
+      "dashboard",
+      "user-id-2"
+    ],
+    "projectManagerBodyClass": "user-id-3",
+    "projectManagerMenuCount": 9,
+    "itemsHiddenFromProjectManager": [
+      "Subscriptions",
+      "Expenses",
+      "Estimate Request",
+      "Knowledge Base",
+      "Reports"
+    ]
+  },
+  "customerPortal": {
+    "homePath": "/",
+    "titleAfterLogin": "Customer Example",
+    "adminInternalPath": "/admin/clients"
+  },
+  "autologinCookie": {
+    "name": "autologin",
+    "pattern": "^a:2:\\{s:7:\"user_id\";s:\\d+:\"\\d+\";s:3:\"key\";s:16:\"[0-9a-f]{16}\";\\}$"
+  }
+}
