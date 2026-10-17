@@ -82,6 +82,16 @@ jobs:
         with:
           path: reports/allure-report
 
+      # Vài KB số liệu cho job notify — tránh phải tải cả artifact test-reports hàng trăm MB
+      - uses: actions/upload-artifact@v4
+        if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          name: allure-summary
+          path: |
+            reports/allure-report/summary.json
+            reports/allure-report/test-results.json
+          retention-days: 1
+
   deploy-report:
     # Chạy cả khi test FAIL — report của lần chạy đỏ mới là report cần xem nhất
     if: always() && needs.test.result != 'cancelled' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -96,6 +106,37 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  notify:
+    # Chạy sau deploy-report để link report trong tin nhắn đã là bản mới nhất
+    if: always() && needs.test.result != 'cancelled' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: [test, deploy-report]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/download-artifact@v4
+        # Run hỏng trước khi sinh report thì không có artifact — script vẫn báo "không có kết quả test"
+        continue-on-error: true
+        with:
+          name: allure-summary
+          path: reports/allure-report
+
+      - name: Gửi kết quả vào group Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_THREAD_ID: ${{ vars.TELEGRAM_THREAD_ID }}
+          REPORT_URL: ${{ needs.deploy-report.outputs.page_url }}
+          DEPLOY_RESULT: ${{ needs.deploy-report.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: node scripts/telegram-notify.mjs reports/allure-report

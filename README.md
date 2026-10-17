@@ -101,6 +101,14 @@ Toàn bộ output nằm trong `reports/` (đã `.gitignore`): `allure-results/` 
 
 **Xem report trực tiếp trên GitHub Pages:** mỗi lần chạy trên `main` (push, lịch hằng ngày, chạy tay — không tính pull request), job `deploy-report` đăng `reports/allure-report` lên `https://diemleta.github.io/playwright-typescript-crm/`, kể cả khi test FAIL. Trang chỉ giữ report của **lần chạy gần nhất**. Bật một lần: **Settings → Pages → Build and deployment → Source: GitHub Actions** (repo private cần gói GitHub Pro trở lên). Trang Pages công khai với mọi người có link, nên bản đăng đã bỏ trace (`.zip`); video và ảnh vẫn còn.
 
+**Báo kết quả vào group Telegram:** sau `deploy-report`, job `notify` gửi một tin nhắn gồm số PASS/FAIL/SKIP, danh sách test lỗi, link Allure report và link run (cùng điều kiện chạy với `deploy-report`). Script: `scripts/telegram-notify.mjs`, chạy thử ở máy bằng `node scripts/telegram-notify.mjs reports/allure-report --dry-run`. Thiết lập một lần:
+
+1. Tạo bot với [@BotFather](https://t.me/BotFather) (`/newbot`) → lấy token.
+2. Thêm bot vào group, gửi một tin bất kỳ trong group, rồi mở `https://api.telegram.org/bot<TOKEN>/getUpdates` → lấy `chat.id` (group có dạng `-100…`).
+3. Khai GitHub Secrets `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`. Group bật Topics thì khai thêm Variable `TELEGRAM_THREAD_ID` (id topic).
+
+Thiếu secret thì job chỉ cảnh báo và bỏ qua, không làm đỏ CI. Không gửi kèm file report vì bản 1 file nặng hơn 100MB, vượt giới hạn 50MB của Telegram Bot API.
+
 Workflow **không** truyền tài khoản tuỳ chọn (`PM_*`, `CUSTOMER_*`, `TC014_*`) nên trên CI `CRM_LOGIN_TC_006`, `014`, `019`, `020` tự skip. Muốn chạy thì thêm Secret và khai thêm vào bước `Run tests` — lưu ý `019`, `020` chập chờn theo dữ liệu dùng chung (xem Known issues).
 
 ⚠️ Artifact `test-reports` chứa video và trace của test fail — trace ghi lại cả giá trị đã gõ vào ô Password. Chỉ dùng tài khoản test, và cân nhắc để repo private.
