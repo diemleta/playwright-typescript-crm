@@ -6,7 +6,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    # Cron tính theo UTC — 08:50 UTC = 15:50 giờ Việt Nam (UTC+7), chạy hằng ngày
+    # Cron tính theo UTC — 08:55 UTC = 15:55 giờ Việt Nam (UTC+7), chạy hằng ngày
     - cron: '55 8 * * *'
 
 concurrency:
