@@ -24,9 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -64,7 +64,7 @@ jobs:
         # reports/allure-report-single/index.html — mở bằng double-click sau khi tải artifact
         run: npm run report:single
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-reports
@@ -77,13 +77,13 @@ jobs:
         if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: find reports/allure-report -name '*.zip' -delete
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v7
         if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: reports/allure-report
 
       # Vài KB số liệu cho job notify — tránh phải tải cả artifact test-reports hàng trăm MB
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           name: allure-summary
@@ -110,7 +110,7 @@ jobs:
       page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   notify:
     # Chạy sau deploy-report để link report trong tin nhắn đã là bản mới nhất
@@ -118,13 +118,13 @@ jobs:
     needs: [test, deploy-report]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         # Run hỏng trước khi sinh report thì không có artifact — script vẫn báo "không có kết quả test"
         continue-on-error: true
         with:
