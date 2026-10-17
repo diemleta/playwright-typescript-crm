@@ -99,6 +99,8 @@ Toàn bộ output nằm trong `reports/` (đã `.gitignore`): `allure-results/` 
 
 `.github/workflows/playwright.yml` chạy khi push `main`, pull request, hoặc chạy tay. Khai 3 GitHub Secrets: `BASE_URL`, `TEST_USERNAME`, `TEST_PASSWORD`. Số luồng CI đổi ở `env.WORKERS` của workflow (runner `ubuntu-latest`: repo public 4 vCPU, repo private 2 vCPU — repo private nên hạ xuống 2–3 nếu chập chờn). Report upload thành artifact `test-reports`.
 
+**Xem report trực tiếp trên GitHub Pages:** mỗi lần chạy trên `main` (push, lịch hằng ngày, chạy tay — không tính pull request), job `deploy-report` đăng `reports/allure-report` lên `https://diemleta.github.io/playwright-typescript-crm/`, kể cả khi test FAIL. Trang chỉ giữ report của **lần chạy gần nhất**. Bật một lần: **Settings → Pages → Build and deployment → Source: GitHub Actions** (repo private cần gói GitHub Pro trở lên). Trang Pages công khai với mọi người có link, nên bản đăng đã bỏ trace (`.zip`); video và ảnh vẫn còn.
+
 Workflow **không** truyền tài khoản tuỳ chọn (`PM_*`, `CUSTOMER_*`, `TC014_*`) nên trên CI `CRM_LOGIN_TC_006`, `014`, `019`, `020` tự skip. Muốn chạy thì thêm Secret và khai thêm vào bước `Run tests` — lưu ý `019`, `020` chập chờn theo dữ liệu dùng chung (xem Known issues).
 
 ⚠️ Artifact `test-reports` chứa video và trace của test fail — trace ghi lại cả giá trị đã gõ vào ô Password. Chỉ dùng tài khoản test, và cân nhắc để repo private.

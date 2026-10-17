@@ -6,8 +6,8 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    # Cron tính theo UTC — 08:45 UTC = 15:45 giờ Việt Nam (UTC+7), chạy hằng ngày
-    - cron: '45 8 * * *'
+    # Cron tính theo UTC — 08:50 UTC = 15:50 giờ Việt Nam (UTC+7), chạy hằng ngày
+    - cron: '55 8 * * *'
 
 concurrency:
   group: playwright-${{ github.ref }}
@@ -70,3 +70,32 @@ jobs:
           name: test-reports
           path: reports/
           retention-days: 14
+
+      # Bản đăng lên GitHub Pages — trang Pages công khai, nên bỏ trace (.zip ghi lại cả giá trị ô Password).
+      # Artifact test-reports ở bước trên vẫn giữ đủ trace để debug.
+      - name: Bỏ trace khỏi bản đăng GitHub Pages
+        if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: find reports/allure-report -name '*.zip' -delete
+
+      - uses: actions/upload-pages-artifact@v3
+        if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          path: reports/allure-report
+
+  deploy-report:
+    # Chạy cả khi test FAIL — report của lần chạy đỏ mới là report cần xem nhất
+    if: always() && needs.test.result != 'cancelled' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
